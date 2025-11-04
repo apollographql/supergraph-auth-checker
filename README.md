@@ -1,7 +1,7 @@
-# Auth Verification Script
+# Auth Checker Script
 
 > [!IMPORTANT]
-> Script is intended to run over supergraphs generated using older federation versions that rely on outdated composition logic (`<= v2.9.3`, `<= v2.10.2`, `<= v2.11.3`). Running the script against supergraphs composed with federation `v2.9.4+`, `v2.10.3+`, `v2.11.4+` or `v2.12+` may result in false positives. 
+> Script is intended to run over supergraphs generated using older federation versions that rely on outdated composition logic (`<= v2.9.3`, `<= v2.10.2`, `<= v2.11.3`). Running the script against supergraphs composed with federation `v2.9.4+`, `v2.10.3+`, `v2.11.4+` or `v2.12+` may result in false positives.
 
 Script used to verify whether target schema may be potentially vulnerable.
 
@@ -29,8 +29,8 @@ Errors and warnings (if any) will be reported to std out.
 `WARNING: Interface "I" specifies authorization directives. Future versions of federation may no longer allow them on interfaces.`
 
 If you cannot upgrade your composition to use latest federation version, you can make your supergraph secure by applying
-same auth requirements on the interface and its implementations. Future versions of federation will no longer support 
-authorization on interfaces and will fail composition. 
+same auth requirements on the interface and its implementations. Future versions of federation will no longer support
+authorization on interfaces and will fail composition.
 
 #### Possible Inconsistent Authorization Requirements
 
@@ -40,6 +40,14 @@ Latest federation versions changed merging behavior of authorization directives 
 `@requiresScopes` and `@policy` were merged using `OR` rules). New merge rules result in enforcing stricter requirements.
 Verify your subgraph and client configurations to ensure proper authorization is configured/enforced.
 
+#### Renamed Authorization Directives
+
+`WARNING: One or more authorization directive have been renamed. Make sure the Router version supports renamed authorization directives (v1.61.12+ or v2.8.1+).`
+
+A vulnerability in unpatched Apollo Router versions allowed for unauthorized access to protected
+data through schema elements with access control directives (@authenticated, @requiresScopes, and
+@policy) that were renamed via @link imports. Upgrade Router to one of the recommended versions.
+
 ### Errors
 
 #### Inconsistent Authorization On Polymorphic Types
@@ -47,7 +55,7 @@ Verify your subgraph and client configurations to ensure proper authorization is
 * `ERROR: Interface "I" defines authorization requirements that are different from requirements on the implementations`
 * `ERROR: Interface "I" does not define authorization requirements and ALL implementations define same requirements`
 
-Recompose your supergraph with latest federation version (`v2.9.4+`, `v2.10.3+`, `v2.11.4+`, `v2.12.0+`) and/or deploy the latest 
+Recompose your supergraph with latest federation version (`v2.9.4+`, `v2.10.3+`, `v2.11.4+`, `v2.12.0+`) and/or deploy the latest
 version of the router (`v2.8.1+` or `1.61.12+`). If you cannot do those updates, update your subgraph configurations immediately
 to define exactly the same authorization requirements on the interfaces and their implementations.
 
