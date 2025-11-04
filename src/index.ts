@@ -37,16 +37,16 @@ class InterfaceAuthValidator {
     }
 
     requirementsOnType(type: ObjectType | InterfaceType): AuthRequirements | undefined {
-        const authenticated = type.appliedDirectivesOf(this.authenticatedDirective)?.[0];
-        const requiresScopes = type.appliedDirectivesOf(this.requiresScopesDirective)?.[0];
-        const policy = type.appliedDirectivesOf(this.policyDirective)?.[0];
+        const authenticated = this.authenticatedDirective && type.appliedDirectivesOf(this.authenticatedDirective)?.[0];
+        const requiresScopes = this.requiresScopesDirective && type.appliedDirectivesOf(this.requiresScopesDirective)?.[0];
+        const policy = this.policyDirective && type.appliedDirectivesOf(this.policyDirective)?.[0];
         return this.authRequirementsOnElement(authenticated, requiresScopes, policy);
     }
 
     requirementsOnField(field: FieldDefinition<any>): AuthRequirements | undefined {
-        const authenticated = field.appliedDirectivesOf(this.authenticatedDirective)?.[0];
-        const requiresScopes = field.appliedDirectivesOf(this.requiresScopesDirective)?.[0];
-        const policy = field.appliedDirectivesOf(this.policyDirective)?.[0];
+        const authenticated = this.authenticatedDirective && field.appliedDirectivesOf(this.authenticatedDirective)?.[0];
+        const requiresScopes = this.requiresScopesDirective && field.appliedDirectivesOf(this.requiresScopesDirective)?.[0];
+        const policy = this.policyDirective && field.appliedDirectivesOf(this.policyDirective)?.[0];
         return this.authRequirementsOnElement(authenticated, requiresScopes, policy);
     }
 
