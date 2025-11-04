@@ -36,6 +36,25 @@ class InterfaceAuthValidator {
         this.policyDirective = policySpec?.policyDirective(supergraph);
     }
 
+    checkRenamedAuthDirectives() {
+        const renamedDirectives = [];
+        if (this.authenticatedDirective && this.authenticatedDirective.name != AuthenticatedSpecDefinition.directiveName) {
+            renamedDirectives.push([AuthenticatedSpecDefinition.directiveName, this.authenticatedDirective.name]);
+        }
+        if (this.requiresScopesDirective && this.requiresScopesDirective.name != RequiresScopesSpecDefinition.directiveName) {
+            renamedDirectives.push([RequiresScopesSpecDefinition.directiveName, this.requiresScopesDirective.name]);
+        }
+        if (this.policyDirective && this.policyDirective.name != PolicySpecDefinition.directiveName) {
+            renamedDirectives.push([PolicySpecDefinition.directiveName, this.policyDirective.name]);
+        }
+        if (renamedDirectives.length > 0) {
+            console.log(`WARNING: One or more authorization directive have been renamed. Make sure router version supports renamed authorization directives (v1.61.12+ or v2.8.1+).`);
+            for (const [original, renamed] of renamedDirectives) {
+                console.log(`- "@${original}" is renamed to "@${renamed}"`);
+            }
+        }
+    }
+
     requirementsOnType(type: ObjectType | InterfaceType): AuthRequirements | undefined {
         const authenticated = this.authenticatedDirective && type.appliedDirectivesOf(this.authenticatedDirective)?.[0];
         const requiresScopes = this.requiresScopesDirective && type.appliedDirectivesOf(this.requiresScopesDirective)?.[0];
@@ -244,7 +263,7 @@ for (let object of supergraph.objectTypes()) {
             console.log(`WARNING: Field "${object.name}.${field.name}" specifies authorization directives and is defined in multiple graphs. Verify authorization configuration.`);
         }
     }
-    
+
     if (typeAuthRequirements.reqs || typeAuthRequirements.fieldReqs.size > 0) {
         let implementsInterface = false;
         for (let intf of object.interfaces()) {
@@ -261,6 +280,10 @@ for (let object of supergraph.objectTypes()) {
 
 /// VALIDATIONS
 let isSecure = true;
+
+// Check renamed auth directives
+intfValidator.checkRenamedAuthDirectives();
+
 // interface validations
 for (let intfName of interfacesThatNeedsToBeChecked) {
     const error = intfValidator.validateInterface(intfName);
