@@ -40,6 +40,14 @@ Latest federation versions changed merging behavior of authorization directives 
 `@requiresScopes` and `@policy` were merged using `OR` rules). New merge rules result in enforcing stricter requirements.
 Verify your subgraph and client configurations to ensure proper authorization is configured/enforced.
 
+#### Renamed Authorization Directives
+
+`WARNING: One or more authorization directive have been renamed. Make sure the Router version supports renamed authorization directives (v1.61.12+ or v2.8.1+).`
+
+A vulnerability in unpatched Apollo Router versions allowed for unauthorized access to protected
+data through schema elements with access control directives (@authenticated, @requiresScopes, and
+@policy) that were renamed via @link imports. Upgrade Router to one of the recommended versions.
+
 ### Errors
 
 #### Inconsistent Authorization On Polymorphic Types
