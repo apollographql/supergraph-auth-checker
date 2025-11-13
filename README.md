@@ -20,7 +20,11 @@ npm install
 npm run check mysupergraph.graphql
 ```
 
-Errors and warnings (if any) will be reported to std out.
+Warnings and errors (if any) will be reported to std out. Errors will result in process exiting with a status code 1.
+
+> [!WARNING]
+> Fixing reported security vulnerabilities is an iterative process. Fixing any of the reported ERRORs may result in 
+> triggering other ERROR conditions. You should continue running the checks until process run successfully to completion.
 
 ### Warnings
 
@@ -40,20 +44,20 @@ Latest federation versions changed merging behavior of authorization directives 
 `@requiresScopes` and `@policy` were merged using `OR` rules). New merge rules result in enforcing stricter requirements.
 Verify your subgraph and client configurations to ensure proper authorization is configured/enforced.
 
+### Errors
+
 #### Renamed Authorization Directives
 
-`WARNING: One or more authorization directive have been renamed. Make sure the Router version supports renamed authorization directives (v1.61.12+ or v2.8.1+).`
+`ERROR: One or more authorization directive have been renamed. Make sure the Router version supports renamed authorization directives (v1.61.12+ or v2.8.1+).`
 
 A vulnerability in unpatched Apollo Router versions allowed for unauthorized access to protected
 data through schema elements with access control directives (@authenticated, @requiresScopes, and
 @policy) that were renamed via @link imports. Upgrade Router to one of the recommended versions.
 
-### Errors
-
 #### Inconsistent Authorization On Polymorphic Types
 
-* `ERROR: Interface "I" defines authorization requirements that are different from requirements on the implementations`
-* `ERROR: Interface "I" does not define authorization requirements and ALL implementations define same requirements`
+* `ERROR: Interface "I" and object type "T" define different access control requirements.`
+* `ERROR: Interface field "I.secret" and object field "T.secret" defines different access control requirements.`
 
 Recompose your supergraph with latest federation version (`v2.9.4+`, `v2.10.3+`, `v2.11.4+`, `v2.12.0+`) and/or deploy the latest
 version of the router (`v2.8.1+` or `1.61.12+`). If you cannot do those updates, update your subgraph configurations immediately
